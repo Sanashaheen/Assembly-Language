@@ -1,0 +1,74 @@
+org 100h
+.model small
+.data
+
+msg db 'Enter number',0dh,0ah,'$'
+arr db 0,0,0,0,0  
+str db 'SUM: $'
+
+.code
+
+mov ax,@data
+mov ds,ax
+
+calprintsum macro p1,p2,p3,p4,p5
+        mov al,p1
+        mov bl,p2
+        add bl,al
+        mov al,p3
+        add bl,al
+        mov al,p4
+        add bl,al
+        mov al,p5
+        add bl,al
+        
+        mov ah,02
+        mov dl,0dh
+        int 21h
+        
+        mov dl,0ah
+        int 21h
+        
+        lea dx,str
+        mov ah,09
+        int 21h
+        
+        mov dl,bl
+        add dl,48
+        mov ah,02
+        int 21h
+
+
+endm
+
+lea dx,msg
+mov ah,09
+int 21h
+
+mov cx,5
+mov si,0
+
+L1:
+     mov ah,01
+     int 21h
+     
+     sub al,48
+     
+     mov arr[si],al
+     calprintsum arr[0],arr[1],arr[2],arr[3],arr[4]
+     
+     inc si
+     
+     mov ah,02
+     mov dl,0dh
+     int 21h
+        
+     mov dl,0ah
+     int 21h
+loop l1 
+
+
+done:
+mov ah,4ch
+int 21h
+ret

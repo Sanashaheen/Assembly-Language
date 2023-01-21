@@ -1,0 +1,78 @@
+org 100h
+.model small
+.data
+zero db 0
+msg db 'Enter two Numbers',0dh,0ah,'Enter 00 to stop$' 
+msg2 db 0dh,0ah,'product: $'
+
+.code
+
+mov ax,@data
+mov ds,ax
+
+product macro p1,p2
+
+    lea dx,msg2
+    mov ah,09
+    int 21h
+    
+    mov ax,p1
+    
+    mov cx,p2  
+    
+    mul cx
+    
+    mov dx,ax
+    add dx,48
+    mov ah,02
+    int 21h
+    
+endm
+
+lea dx,msg
+mov ah,09
+int 21h
+
+input:
+mov ah,02
+mov dl,0dh
+int 21h   
+
+mov dl,0ah
+int 21h
+
+mov ah,01
+int 21h
+
+mov bx,ax
+sub bx,48
+  
+mov ah,01
+int 21h 
+
+mov cx,ax
+sub cx,48
+
+cmp bx,256
+JE l2
+jmp product
+
+l2:
+cmp cx,256
+JE done
+
+product: 
+product bx,cx
+
+cmp bx,256
+JNE input
+
+cmp cx,256
+JNE input
+ 
+
+
+done:
+mov ah,4ch
+int 21h
+ret
